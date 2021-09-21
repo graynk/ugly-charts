@@ -60,6 +60,7 @@ func cairoRGBA(c color.Color) (float64, float64, float64, float64) {
 	return float64(r) / 0xFFFF, float64(g) / 0xFFFF, float64(b) / 0xFFFF, float64(a) / 0xFFFF
 }
 
+// NewLineChart
 // Constructor that initializes backing slice and connects
 // drawing function to GtkDrawingArea
 func NewLineChart(da *gtk.DrawingArea) Chart {
@@ -87,7 +88,7 @@ func NewLineChart(da *gtk.DrawingArea) Chart {
 	ch.a = &FloatPoint{0, 0}
 	var backingImage *cairo.Surface
 	var icr *cairo.Context
-	_, err := ch.da.Connect("draw", func(da *gtk.DrawingArea, cr *cairo.Context) {
+	_ = ch.da.Connect("draw", func(da *gtk.DrawingArea, cr *cairo.Context) {
 		intWidth, intHeight := da.GetAllocatedWidth(), da.GetAllocatedHeight()
 		// not sure how much sense drawing to an image off screen makes, but I'm guessing it's faster with locked axis
 		// needs profiling to be sure
@@ -135,9 +136,6 @@ func NewLineChart(da *gtk.DrawingArea) Chart {
 		cr.SetSourceSurface(backingImage, 0, 0)
 		cr.Paint()
 	})
-	if err != nil {
-		panic(err)
-	}
 	return &ch
 }
 
@@ -256,7 +254,7 @@ func (ch *lineChart) drawTitle(icr *cairo.Context, width, dpi float64) {
 	}
 	icr.SetFontSize(dpi / 4)
 	extents := icr.TextExtents(ch.title)
-	x, y := (width-extents.Width)/2, extents.Height + 5
+	x, y := (width-extents.Width)/2, extents.Height+5
 	icr.SetSourceRGBA(0.3, 0.3, 0.3, 0.2)
 	icr.Rectangle(x-5, y-extents.Height, extents.Width+15, extents.Height+10)
 	icr.Fill()
